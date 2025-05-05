@@ -1,0 +1,99 @@
+body {
+  font-family: sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 2rem;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+form {
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.label-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.label {
+  display: inline-block;
+  padding: 8px;
+  margin: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+}
+
+.label-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.qr {
+  flex-shrink: 0;
+}
+
+.location {
+  font-size: 3em;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+
+
+/* ===== Print Styles ===== */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #print-area,
+  #print-area * {
+    visibility: visible;
+  }
+
+  #print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .label {
+    border: none !important;
+    margin: 0 !important;
+    padding: 0.2in !important;
+    page-break-inside: avoid;
+  }
+
+  @page {
+    size: auto;
+    margin: 0.25in;
+  }
+}
