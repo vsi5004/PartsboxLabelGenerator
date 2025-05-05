@@ -6,6 +6,7 @@ const App = () => {
   const [location, setLocation] = useState('');
   const [labels, setLabels] = useState([]);
   const [error, setError] = useState('');
+  const [progress, setProgress] = useState(null);
 
   const fetchLocation = async () => {
     setError('');
@@ -43,6 +44,35 @@ const App = () => {
     setError('');
   };
 
+  const generateAllLabels = () => {
+    setLabels([]);
+    setProgress({ current: 0, total: 0 });
+
+    const eventSource = new EventSource('/stream-labels');
+
+    eventSource.addEventListener('label', (e) => {
+      const newLabel = JSON.parse(e.data);
+      setLabels(prev => [...prev, newLabel]);
+    });
+
+    eventSource.addEventListener('progress', (e) => {
+      const p = JSON.parse(e.data);
+      setProgress(p);
+    });
+
+    eventSource.addEventListener('done', () => {
+      setProgress(null);
+      eventSource.close();
+    });
+
+    eventSource.onerror = (err) => {
+      console.error("EventSource failed:", err);
+      setProgress(null);
+      eventSource.close();
+      setError('Failed to stream labels');
+    };
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -53,7 +83,7 @@ const App = () => {
       <form onSubmit={(e) => e.preventDefault()}>
         <input
           type="text"
-          placeholder="Paste PartsBox URL..."
+          placeholder="Paste PartsBox URL or ID..."
           value={url}
           onChange={(e) => setUrl(e.target.value)}
         />
@@ -65,10 +95,16 @@ const App = () => {
           onChange={(e) => setLocation(e.target.value)}
         />
         <button type="button" onClick={addToQueue}>Add to Queue</button>
+        <button type="button" onClick={generateAllLabels}>Generate All Labels</button>
         <button type="button" onClick={handlePrint}>Print</button>
       </form>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {progress && (
+        <p>
+          Generating labels: {progress.current} of {progress.total}
+        </p>
+      )}
 
       <div id="print-area" className="label-list">
         {labels.map((part, idx) => (
